@@ -14,6 +14,9 @@ func (c *Cluster) Join(spec JoinSpec) error {
 
 // JoinContext 可取消的 Join。
 func (c *Cluster) JoinContext(ctx context.Context, spec JoinSpec) error {
+	if err := ctx.Err(); err != nil {
+		return wrapCancel(err)
+	}
 
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -30,6 +33,11 @@ func (c *Cluster) JoinContext(ctx context.Context, spec JoinSpec) error {
 		return ErrExists
 	}
 	if err := c.sched.WaitJoin(ctx); err != nil {
+		return wrapCancel(err)
+	}
+	// WaitJoin 返回后再次确认 ctx：已取消/超时则不得继续入表，
+	// 否则调用方超时重试会命中 ErrExists 而留下脏状态。
+	if err := ctx.Err(); err != nil {
 		return wrapCancel(err)
 	}
 	m := member.Member{

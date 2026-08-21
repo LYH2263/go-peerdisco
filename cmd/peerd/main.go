@@ -63,7 +63,7 @@ func main() {
 			return
 		}
 		mu.Lock()
-		err := c.Join(spec)
+		err := c.JoinContext(r.Context(), spec)
 		mu.Unlock()
 		if err != nil {
 			http.Error(w, err.Error(), 400)

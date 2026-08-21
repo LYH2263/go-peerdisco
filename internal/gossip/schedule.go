@@ -30,8 +30,7 @@ func (s *Scheduler) Fire() {
 }
 
 // WaitJoin Join 前可选短等待，须尊重 ctx。
+// 进入即检查 ctx，已取消/超时直接返回 err，避免继续入表导致脏状态。
 func (s *Scheduler) WaitJoin(ctx context.Context) error {
-
-	_ = ctx
-	return nil
+	return ctx.Err()
 }
