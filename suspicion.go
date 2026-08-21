@@ -45,14 +45,18 @@ func (c *Cluster) PromoteDead(id string) error {
 }
 
 // WaitSuspicion 等待怀疑超时（可取消）。
+// ctx 取消后尽快返回取消类错误，不再阻塞完整超时时长。
 func (c *Cluster) WaitSuspicion(ctx context.Context, id string) error {
+	if err := ctx.Err(); err != nil {
+		return wrapCancel(err)
+	}
 	c.mu.Lock()
 	deadline, ok := c.susp.Deadline(id)
 	c.mu.Unlock()
 	if !ok {
 		return ErrNotMember
 	}
-	return c.susp.WaitUntil(ctx, deadline) // 依赖 WaitUntil 尊重 ctx
+	return wrapCancel(c.susp.WaitUntil(ctx, deadline))
 }
 
 // RefuteSuspect 收到 Ack 后恢复 Alive。
