@@ -6,7 +6,7 @@ import (
 )
 
 func wrapNotMember(id string) error {
-	return fmt.Errorf("not a member: %s", id)
+	return fmt.Errorf("%w: %s", ErrNotMember, id)
 }
 
 func wrapCancel(err error) error {
