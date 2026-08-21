@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <title>peerdisco 成员发现</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header><h1>Gossip 成员发现</h1><p>peerd · :8105</p></header>
+  <main>
+    <section>
+      <h2>成员</h2>
+      <button id="refresh">刷新</button>
+      <pre id="members"></pre>
+    </section>
+    <section>
+      <h2>怀疑队列</h2>
+      <pre id="suspicion"></pre>
+    </section>
+    <section>
+      <h2>注入 Join</h2>
+      <input id="jid" placeholder="id"/><input id="jaddr" placeholder="addr"/>
+      <button id="doJoin">Join</button>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
