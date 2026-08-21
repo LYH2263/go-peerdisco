@@ -22,6 +22,9 @@ func (c *Cluster) JoinContext(ctx context.Context, spec JoinSpec) error {
 	if c.closed {
 		return ErrClosed
 	}
+	if c.tr == nil {
+		return ErrNoTransport
+	}
 
 	if spec.ID == "" || spec.Addr == "" {
 		return ErrInvalid

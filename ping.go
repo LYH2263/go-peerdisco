@@ -41,6 +41,9 @@ func (c *Cluster) IndirectPing(ctx context.Context, id string) error {
 	if c.closed {
 		return ErrClosed
 	}
+	if c.tr == nil {
+		return ErrNoTransport
+	}
 	helpers := c.table.PickHelpers(id, c.opts.IndirectFanout)
 	payload := gossip.EncodeIndirect(c.selfID, id)
 	for _, h := range helpers {

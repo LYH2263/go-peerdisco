@@ -6,8 +6,7 @@ func ID(s string) bool {
 	if s == "" || len(s) > 128 {
 		return false
 	}
-	return !strings.ContainsAny(s, " 	
-")
+	return !strings.ContainsAny(s, " \t\n\r")
 }
 
 func Addr(s string) bool {
