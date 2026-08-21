@@ -17,10 +17,13 @@ func (c *Cluster) Close() error {
 
 	c.mu.Lock()
 
+	// 先 persist 再 Clear：否则空快照覆盖磁盘，重启 LoadPersist 拿到空表。
+	if err := c.persistLocked(); err != nil {
+		// 落盘失败不影响关闭流程，但仍需清表，避免内存泄漏。
+	}
 	c.table.Clear()
 	c.meta.Clear()
 	c.susp.Clear()
-	_ = c.persistLocked()
 	if c.audit != nil {
 		_ = c.audit.Close()
 		c.audit = nil
