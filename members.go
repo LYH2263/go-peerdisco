@@ -18,7 +18,7 @@ func (c *Cluster) Members() []MemberView {
 			State:       State(m.State),
 			Incarnation: m.Incarnation,
 			Meta:        c.meta.GetClone(m.ID),
-			Tags:        m.Tags,
+			Tags:        member.CloneTags(m.Tags),
 			JoinedAt:    m.JoinedAt,
 			Updated:     m.Updated,
 		})
