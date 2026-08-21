@@ -49,7 +49,9 @@ func (c *Cluster) JoinContext(ctx context.Context, spec JoinSpec) error {
 	}
 	c.meta.Set(spec.ID, metaCopy)
 	if err := c.persistLocked(); err != nil {
-
+		// 持久化失败：回滚成员表与元数据，避免内存与磁盘不一致的半成功入表。
+		_ = c.table.Remove(spec.ID)
+		c.meta.Delete(spec.ID)
 		return err
 	}
 	c.metrics.IncJoins()

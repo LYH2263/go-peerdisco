@@ -15,8 +15,7 @@ func (c *Cluster) persistLocked() error {
 		Meta:     c.meta.AllClone(),
 	}
 	if err := c.persist.Save(snap); err != nil {
-
-		return nil
+		return wrapPersist(err)
 	}
 	return nil
 }
