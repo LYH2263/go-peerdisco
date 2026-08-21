@@ -37,8 +37,14 @@ func (l *Logger) Close() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	if l.f == nil {
+		return nil
+	}
+	// 先置 nil 让并发 Write 看到 closed 状态，再真正关闭句柄。
+	// 不调用 f.Close() 会导致 Windows 上文件句柄泄漏、日志轮转 Rename 报文件被占用。
+	f := l.f
 	l.f = nil
-	return nil
+	return f.Close()
 }
 
 func (l *Logger) Path() string { return l.path }
