@@ -20,6 +20,9 @@ func (c *Cluster) JoinContext(ctx context.Context, spec JoinSpec) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	if c.closed {
+		return ErrClosed
+	}
 	if c.tr == nil {
 		return ErrNoTransport
 	}
