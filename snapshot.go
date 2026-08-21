@@ -1,22 +1,27 @@
 package peerdisco
 
-import "example.com/peerdisco/internal/meta"
+import (
+	"example.com/peerdisco/internal/member"
+	"example.com/peerdisco/internal/meta"
+)
 
 // Snapshot 导出完整成员+元数据视图。
 func (c *Cluster) Snapshot() []MemberView {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if c.closed {
+		return nil
+	}
 	raw := c.table.List()
 	out := make([]MemberView, 0, len(raw))
 	for _, m := range raw {
-		tags := m.Tags
 		out = append(out, MemberView{
 			ID:          m.ID,
 			Addr:        m.Addr,
 			State:       State(m.State),
 			Incarnation: m.Incarnation,
 			Meta:        meta.CloneMap(c.meta.Get(m.ID)),
-			Tags:        tags,
+			Tags:        member.CloneTags(m.Tags),
 			JoinedAt:    m.JoinedAt,
 			Updated:     m.Updated,
 		})

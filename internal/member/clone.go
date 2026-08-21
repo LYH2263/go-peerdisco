@@ -1,8 +1,14 @@
 package member
 
-// CloneTags 深拷贝标签。
+// CloneTags 深拷贝标签切片，绝不返回内部底层切片，
+// 避免外部对返回值排序或改写时污染成员表。
 func CloneTags(src []string) []string {
-	return src
+	if src == nil {
+		return nil
+	}
+	dst := make([]string, len(src))
+	copy(dst, src)
+	return dst
 }
 
 // CloneMember 深拷贝成员。
